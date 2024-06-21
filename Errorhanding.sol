@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-contract GradingSystem {
-    enum Grade { A, B, C ,D,E,F}
+contract GradingSystems {
+    enum Grade { A, B, C ,D , E, F}
 
     mapping(address => Grade) public grades;
 
