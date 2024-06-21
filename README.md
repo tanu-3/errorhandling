@@ -4,14 +4,17 @@ The basic purpose is to make code more accurate by using error handling statemen
 
 ## Description
 
-We created a smart contract name AutomaticShop. In this, users enter in a shop add items and exit and then the payment is cut from phone directly without giving in shop.This includes functions such as enterShop,addItem, payBill,exitShop and addMoney for all functioning of error handling concepts.
+We created a smart contract name GradingSystems. In this,it is basically for calculation of grades in school time where the need of error handling is important alot. I used require,revert and assert to handle the problems occuring in calculation time.
 
 ## Getting Started
 
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+1. Install errorhandling.sol file of mine.
+2. Run on Remix.
+3. compile
+4. deloy.
+5. test al conditions.
 
 ### Executing program
 
