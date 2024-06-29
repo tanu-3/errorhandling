@@ -1,40 +1,64 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
-contract GradingSystems {
-    enum Grade { A, B, C ,D , E, F}
+contract GameWinner {
+    address public owner;
+    address public winner;
+    bool public gameEnded;
 
-    mapping(address => Grade) public grades;
+    mapping(address => uint256) public scores;
+    address[] public players;
 
-    event GradeAssigned(address student, Grade grade);
+    constructor() {
+        owner = msg.sender;
+        gameEnded = false;
+    }
 
-    function assignGrade(address student, uint8 marks) public {
-       
-        require(marks >= 0 && marks <= 32, "Invalid marks. Marks should be between 0 and 32");
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function.");
+        _;
+    }
 
-       
-        uint8 gradeValue = marks / 15;  
+    modifier gameNotEnded() {
+        require(!gameEnded, "The game has already ended.");
+        _;
+    }
 
-        assert(gradeValue >= 0 && gradeValue <= 5);
+    function addPlayer(address player) public onlyOwner gameNotEnded {
+        players.push(player);
+        scores[player] = 0;
+    }
 
-        Grade grade;
-        if (gradeValue == 5) {
-            grade = Grade.A;
-        } else if (gradeValue == 4) {
-            grade = Grade.B;
-        } else if (gradeValue == 3) {
-            grade = Grade.C;
-        } else if (gradeValue == 2) {
-            grade = Grade.D;
-        } else if (gradeValue == 1) {
-            grade = Grade.E;
-        }else if (gradeValue == 0) {
-            grade = Grade.F;
-        }else {
-            revert("Invalid grade.");
+    function updateScore(address player, uint256 score) public onlyOwner gameNotEnded {
+        require(score > scores[player], "New score must be higher than the current score.");
+        scores[player] = score;
+    }
+
+    function endGame() public onlyOwner gameNotEnded {
+        uint256 highestScore = 0;
+        address highestScorer = address(0);
+
+        for (uint256 i = 0; i < players.length; i++) {
+            if (scores[players[i]] > highestScore) {
+                highestScore = scores[players[i]];
+                highestScorer = players[i];
+            }
         }
-        grades[student] = grade;
-        emit GradeAssigned(student, grade);
+
+        // Ensure that there is at least one player
+        assert(players.length > 0);
+
+        // If no highest scorer is found, revert the transaction
+        if (highestScorer == address(0)) {
+            revert("No highest scorer found. Game cannot end.");
+        }
+
+        winner = highestScorer;
+        gameEnded = true;
+    }
+
+    function getWinner() public view returns (address) {
+        require(gameEnded, "The game has not ended yet.");
+        return winner;
     }
 }
-
